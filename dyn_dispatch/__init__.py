@@ -4,6 +4,10 @@ To allow for overloaded mehtods inside a class decorate an empty method with the
 and use the @dyn_dispatch decorator to generate overloaded versions of the declared method outside
 the class definition.
 
+It is possible to set the number of arguments used for the overload resolution by invoking
+the `set_max_args` function.
+
+
 Example:
     # class definition   
     class AClass:
