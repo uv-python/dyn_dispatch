@@ -20,7 +20,7 @@ the class definition.
         def __init__(self, i: int, j: int = 0):
             self.i = i
 
-        @dyn_method
+        @dyn_method #does not work with multimethods and multipledispatch
         def __add__(self, *_) -> AClass:
             ...
 
@@ -34,6 +34,10 @@ the class definition.
     def add_obj(self, other: AClass) -> AClass:
         return AClass(self.i + other.i, self.j + other.j)
 
+    @dyn_dispatch(AClass, "__add__", int)
+    def add_int(self, i: int) -> AClass:
+        return AClass(self.i + i, self.j + i)
+    
     @dyn_dispatch(AClass, "set", int)
     def set_int(self, i: int):
         self.i = i
