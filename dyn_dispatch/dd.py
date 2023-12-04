@@ -20,7 +20,6 @@ def get_max_args() -> int:
     Returns:
         Max number of arguments.
     """
-    global __max_args
     return __max_args
 
 

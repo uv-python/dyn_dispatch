@@ -4,10 +4,10 @@
 # SPDX license identifier: BSD-3-Clause
 
 from __future__ import annotations
-from dd import *
+from .dd import *
 
 
-def test():
+def test() -> bool:
     # Declarations
 
     ### Class
@@ -27,6 +27,10 @@ def test():
     @dyn_dispatch(AClass, "__add__", AClass)
     def add_obj(self, other: AClass) -> AClass:
         return AClass(self.i + other.i, self.j + other.j)
+
+    @dyn_dispatch(AClass, "__add__", int)
+    def add_int(self, i: int) -> AClass:
+        return AClass(self.i + i, self.j + i)
 
     @dyn_dispatch(AClass, "set", int)
     def set_int(self, i: int):
@@ -76,6 +80,10 @@ def test():
     assert c.i == a.i + b.i
     assert c.j == a.j + b.j
 
+    d = a + 2
+    assert d.i == a.i + 2
+    assert d.j == a.j + 2
+
     a.set(2)
     assert a.i == 2
     a.set(3.1)
@@ -99,6 +107,8 @@ def test():
         assert False
     except:
         assert True
+
+    return True
 
 
 if __name__ == "__main__":

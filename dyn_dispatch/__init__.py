@@ -68,7 +68,7 @@ Example:
     assert a = 20
 
 """
-from dd import (
+from .dd import (
     get_max_args,
     set_max_args,
     dyn_dispatch,
@@ -76,4 +76,4 @@ from dd import (
     dyn_method,
     dyn_fun,
 )
-from test import test
+from .test import test
