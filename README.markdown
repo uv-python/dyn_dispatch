@@ -10,6 +10,10 @@ To allow for overloaded mehtods inside a class decorate an empty method with the
 and use the @dyn_dispatch decorator to generate overloaded versions of the declared method outside
 the class definition.
 
+Methods accepting a and/or returning a class instance (required to e.g. overload operators for vectors and matrices)
+do not work with any of the multiple dispatch packages I have tried.
+
+
 ### Example:
 
 
