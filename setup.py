@@ -9,7 +9,7 @@ with open("README.markdown", "r") as f:
 
 # Setting up
 setup(
-    name="dyn_dispatch",
+    name="dyn-dispatch",
     version="0.3",
     author="Ugo Varetto",
     author_email="ugovaretto@gmail.com>",
