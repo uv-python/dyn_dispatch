@@ -13,6 +13,9 @@ the class definition.
 Methods accepting a and/or returning a class instance (required to e.g. overload operators for vectors and matrices)
 do not work with any of the multiple dispatch packages I have tried.
 
+Note that strong typing is enforced, passing parameters of types different from the one
+listed in the decorator will result in throwing an exception.
+
 
 ### Example:
 
@@ -88,3 +91,25 @@ as overloaeded and the @dyn_dispatch_f decorator to generate overloads.
     a = double("10")
     assert a = 20
 ```
+
+## Union types
+
+When types are specified as `<type 1> | <type 2> | ...` all the possible
+combinations of signatures are generated allowing to write code like:
+
+```
+    @dyn_fun
+    def triple(*_):
+        ...
+
+    @dyn_dispatch_f("triple", float | int | str)
+    def triple_impl(v: float | int | str) -> Any:
+        return v + v + v
+    
+    assert triple(2) == 6
+    assert triple("c") == "ccc"
+    assert abs(triple(1.1) - 3.3) < 1e-15
+
+```
+
+Any type not in the list will result in an exception being thrown.

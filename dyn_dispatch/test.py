@@ -4,7 +4,8 @@
 # SPDX license identifier: BSD-3-Clause
 
 from __future__ import annotations
-from .dd import *
+from dd import dyn_fun, dyn_method, dyn_dispatch, dyn_dispatch_f
+from typing import Any
 
 
 def test() -> bool:
@@ -12,7 +13,7 @@ def test() -> bool:
 
     ### Class
     class AClass:
-        def __init__(self, i: int, j: int = 0):
+        def __init__(self, i: int | float | str, j: int | float | str):
             self.i = i
             self.j = j
 
@@ -22,6 +23,10 @@ def test() -> bool:
 
         @dyn_method
         def set(self, *_) -> None:
+            ...
+
+        @dyn_method
+        def multi_type_add(self, *_) -> None:
             ...
 
     @dyn_dispatch(AClass, "__add__", AClass)
@@ -52,7 +57,13 @@ def test() -> bool:
         # print("set_int_int called")
         self.i, self.j = i, j
 
-    ### Function
+    @dyn_dispatch(AClass, "multi_type_add", int | float | str)
+    def multi_type_add(self, a: int | float | str) -> AClass:
+        self.i += a
+        self.j += a
+        return self
+
+    ### Functions
 
     @dyn_fun
     def double(*_):
@@ -72,6 +83,14 @@ def test() -> bool:
     def double_str(s: str) -> str:
         # print("double_str called")
         return s + s
+
+    @dyn_fun
+    def triple(*_):
+        ...
+
+    @dyn_dispatch_f("triple", float | int | str)
+    def triple_impl(v: float | int | str) -> Any:
+        return v + v + v
 
     # Tests
     a = AClass(1, 2)
@@ -98,6 +117,16 @@ def test() -> bool:
     except:
         assert True
 
+    astr = AClass("str1", "str2")
+    astr.multi_type_add("+2")
+    assert astr.i == "str1" + "+2"
+    assert astr.j == "str2" + "+2"
+
+    aint = AClass(5, 6)
+    aint.multi_type_add(2)
+    assert aint.i == 7
+    assert aint.j == 8
+
     assert double(3) == double_int(3)
     assert double(3.2) == double_float(3.2)
     assert double("6") == double_str("6")
@@ -107,6 +136,10 @@ def test() -> bool:
         assert False
     except:
         assert True
+
+    assert triple(2) == 6
+    assert triple("c") == "ccc"
+    assert abs(triple(1.1) - 3.3) < 1e-15
 
     return True
 
