@@ -4,7 +4,7 @@
 # SPDX license identifier: BSD-3-Clause
 
 from __future__ import annotations
-from dd import dyn_fun, dyn_method, dyn_dispatch, dyn_dispatch_f
+from .dd import dyn_fun, dyn_method, dyn_dispatch, dyn_dispatch_f
 from typing import Any
 
 

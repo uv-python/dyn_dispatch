@@ -43,7 +43,7 @@ from the diffent types.
 
 
 def expand_types(types: list[type]) -> list[list[type]]:
-    expanded = []
+    expanded : list[list[type]] = []
     __expand_unions([types], expanded)
     return expanded
 
