@@ -72,7 +72,7 @@ Example:
     assert a = 20
 
 """
-from .dd import (
+from .dynamic_dispatch import (
     get_max_args,
     set_max_args,
     dyn_dispatch,
