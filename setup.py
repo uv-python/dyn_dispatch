@@ -16,7 +16,7 @@ setup(
     description="Multiple dispatch",
     long_description=LONG_DESCRIPTION,
     url="https://github.com/uv-python/dyn_dispatch",
-    package_data={"dyn_dispatch": ["py.typed", "dd.pyi", "__init__.pyi"]},
+    package_data={"dyn-dispatch": ["py.typed", "dd.pyi", "__init__.pyi"]},
     packages=find_packages(),
     install_requires=[],
     license="BSD-3-Clause",

@@ -1,2 +1,4 @@
 include README.markdown
 include LICENSE
+global-include *.pyi
+global-include *.typed
