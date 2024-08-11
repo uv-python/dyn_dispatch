@@ -1,7 +1,7 @@
 # build with: python3 setup.py bdist_wheel
-from setuptools import setup, find_packages
+from setuptools import setup  # , find_packages
 
-VERSION = "0.4.1"
+VERSION = "0.4.2"
 DESCRIPTION = "Multiple dispatch"
 with open("README.markdown", "r") as f:
     global LONG_DESCRIPTION
@@ -10,7 +10,7 @@ with open("README.markdown", "r") as f:
 # Setting up
 setup(
     name="dyn_dispatch",
-    version="0.4.1",
+    version="0.4.2",
     author="Ugo Varetto",
     author_email="ugovaretto@gmail.com>",
     description="Multiple dispatch",
