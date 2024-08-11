@@ -11,5 +11,6 @@ build
 build
 dist
 *.egg-info
-.mypy_cache
+**/.mypy_cache
 .venv
+**/__pycache__
