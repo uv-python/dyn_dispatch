@@ -6,10 +6,31 @@
 import sys
 from typing import get_args
 
+"""Max number of arguments used for the overload resolution.
+
+Only up to __max_args are used when generating the key and selecting
+the overloaded function/method to call.
+Default is 8.
+"""
 __max_args = 8
 
 
 def __expand_unions(type_lists: list[list[type]], expanded: list[list[type]]):
+    """Expand Unions in cases where the type is represented as a list
+    of optional types separated with '|' e.g. 'float | int'.
+    This function generates all the possible combination of signatures
+    generated from the diffent types.
+
+        Example:
+        In [134]: expand_types([float, int | str | float, str, bool | float])
+        Out[134]:
+            [[float, float, str, float],
+             [float, float, str, bool],
+             [float, str, str, float],
+             [float, str, str, bool],
+             [float, int, str, float],
+             [float, int, str, bool]]
+    """
     if len(type_lists) == 0:
         return
     tl = type_lists.pop()
@@ -21,39 +42,29 @@ def __expand_unions(type_lists: list[list[type]], expanded: list[list[type]]):
     else:
         arg = get_args(tl[elem])
         for a in arg:
-            type_lists.append(tl[:elem] + [a] + tl[elem + 1 :])
+            type_lists.append(tl[:elem] + [a] + tl[elem + 1:])
     __expand_unions(type_lists, expanded)
 
 
-"""Expand Unions in cases where the type is represented as a list
-of optional types separated with '|' e.g. 'float | int'.
-This function generates all the possible combination of signatures generated
-from the diffent types.
-
-    Example:
-    In [134]: expand_types([float, int | str | float, str, bool | float])
-    Out[134]: 
-        [[float, float, str, float],
-         [float, float, str, bool],
-         [float, str, str, float],
-         [float, str, str, bool],
-         [float, int, str, float],
-         [float, int, str, bool]]
-"""
-
-
 def expand_types(types: list[type]) -> list[list[type]]:
-    expanded : list[list[type]] = []
+    """Expand Unions in cases where the type is represented as a list
+    of optional types separated with '|' e.g. 'float | int'.
+    This function generates all the possible combination of signatures
+    generated from the diffent types.
+
+        Example:
+        In [134]: expand_types([float, int | str | float, str, bool | float])
+        Out[134]:
+            [[float, float, str, float],
+             [float, float, str, bool],
+             [float, str, str, float],
+             [float, str, str, bool],
+             [float, int, str, float],
+             [float, int, str, bool]]
+    """
+    expanded: list[list[type]] = []
     __expand_unions([types], expanded)
     return expanded
-
-
-"""Max number of arguments used for the overload resolution.
-
-Only up to __max_args are used when genrating the key and selecting
-the overloaded function/method to call.
-Default is 8.
-"""
 
 
 def get_max_args() -> int:
@@ -80,7 +91,8 @@ def set_max_args(m: int) -> None:
 def __create_overload_table(obj):
     """Create dictionary holding the (types) -> function mapping
     Args:
-        obj (module | class): parent object containing the types --> function map
+        obj (module | class): parent object containing the types
+            --> function map
     Returns:
         None
     """
@@ -90,22 +102,20 @@ def __create_overload_table(obj):
         setattr(obj, "__overload_table", dict())
 
 
-"""Generate overloaded method
-Adds a (key, value) pair into the overloaeded method table where:
-    * key = (method name, (*types))
-    * value = decorated function
-Args:
-    class_type (class): class type
-    method_name (str): method name
-    *types (*type): types
-Returns:
-    decorator
-The invocation will match the type of the passed parameters with the function
-stored in the overloads table.
-"""
-
-
 def dyn_dispatch(class_type, method_name, *types):
+    """Generate overloaded method
+    Adds a (key, value) pair into the overloaeded method table where:
+        * key = (method name, (*types))
+        * value = decorated function
+    Args:
+        class_type (class): class type
+        method_name (str): method name
+        *types (*type): types
+    Returns:
+        decorator
+    The invocation will match the type of the passed parameters with the
+    function stored in the overloads table.
+    """
     expanded_types = expand_types(list(types))
 
     def decorator(f):
@@ -125,30 +135,32 @@ def dyn_dispatch(class_type, method_name, *types):
     return decorator
 
 
-"""Invoke overloaded method
-
-Select function to invoke from type list and invoke function.
-
-Args:
-    f: function to invoke
-Returns:
-    decorated function
-Raises:
-    AttributeError: in case the overloads table is not found
-    TypeError: in case an overload is not found
-"""
-
-
 def dyn_method(f):
+    """Invoke overloaded method
+
+    Select function to invoke from type list and invoke function.
+
+    Args:
+        f: function to invoke
+    Returns:
+        decorated function
+    Raises:
+        AttributeError: in case the overloads table is not found
+        TypeError: in case an overload is not found
+    """
+
     def wrapper(self, *args):
         global __max_args
-        key = (f.__name__, tuple(type(t) for t in args for _ in range(__max_args)))
+        key = (f.__name__, tuple(type(t)
+               for t in args for _ in range(__max_args)))
         # error checking, remove for faster execution
         if not getattr(self, "__overload_table", None):
-            raise AttributeError(f"No overloaded methods found for '{f.__name__}'")
+            raise AttributeError(
+                f"No overloaded methods found for '{f.__name__}'")
         if key not in self.__overload_table:
             raise TypeError(
-                f"No overload found for method '{f.__name__}' with parameter type(s) '{key[1]}'"
+                f"No overload found for method '{f.__name__}'" +
+                f"with parameter type(s) '{key[1]}'"
             )
         return self.__overload_table[key](self, *args)
 
@@ -156,21 +168,19 @@ def dyn_method(f):
     return wrapper
 
 
-"""Generate overloaded function
-Adds a (key, value) pair into the global overloaeded function table where:
-    * key = (method name, (*types))
-    * value = decorated function
-Args:
-    fun_name (str): overloaded function name
-    *types (*type): types
-Returns:
-    decorator
-The invocation will match the type of the passed parameters with the function
-stored in the overloads table.
-"""
-
-
 def dyn_dispatch_f(fun_name, *types):
+    """Generate overloaded function
+    Adds a (key, value) pair into the global overloaeded function table where:
+        * key = (method name, (*types))
+        * value = decorated function
+    Args:
+        fun_name (str): overloaded function name
+        *types (*type): types
+    Returns:
+        decorator
+    The invocation will match the type of the passed parameters with the
+    function stored in the overloads table.
+    """
     expanded_types = expand_types(list(types))
 
     def decorator(f):
@@ -207,10 +217,12 @@ def dyn_fun(f):
         key = (f.__name__, tuple(type(t) for t in args))
         # error checking, remove for faster execution
         if not getattr(module, "__overload_table", None):
-            raise AttributeError(f"No overloaded methods found for '{f.__name__}'")
+            raise AttributeError(
+                f"No overloaded methods found for '{f.__name__}'")
         if key not in module.__overload_table:
             raise TypeError(
-                f"No overload found for method '{f.__name__}' with parameter type(s) '{key[1]}'"
+                f"No overload found for method '{f.__name__}' " +
+                f"with parameter type(s) '{key[1]}'"
             )
         return module.__overload_table[key](*args)
 

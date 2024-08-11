@@ -1,7 +1,7 @@
 """Implementation of multiple dispatch/multimethods.
 
-To allow for overloaded mehtods inside a class decorate an empty method with the @dyn_method decorator
-and use the @dyn_dispatch decorator to generate overloaded versions of the declared method outside
+To allow for overloaded mehtods inside a class decorate an empty method with the `@dyn`_method decorator
+and use the `@dyn_dispatch` decorator to generate overloaded versions of the declared method outside
 the class definition.
 
 It is possible to set the number of arguments used for the overload resolution by invoking
@@ -9,9 +9,9 @@ the `set_max_args` function.
 
 
 Example:
-    # class definition   
+    # class definition
     class AClass:
-        def __init__(self, i: int, j: int = 0):
+        def __init__(self, i: int):
             self.i = i
 
         @dyn_method
@@ -23,10 +23,10 @@ Example:
             ...
 
     #overloaded methods
-    
+
     @dyn_dispatch(AClass, "__add__", AClass)
     def add_obj(self, other: AClass) -> AClass:
-        return AClass(self.i + other.i, self.j + other.j)
+        return AClass(self.i + other.i, self.i + other.i)
 
     @dyn_dispatch(AClass, "set", int)
     def set_int(self, i: int):
@@ -46,7 +46,7 @@ Example:
     a.set("10")
     assert a.i == 10
 
-To generated overloaded versions of free functions use the @dyn_fun decorator to mark an empty function
+To generate overloaded versions of free functions use the `@dyn_fun` decorator to mark an empty function
 as overloaeded and the @dyn_dispatch_f decorator to generate overloads.
 
 Example:
@@ -80,5 +80,6 @@ from .dynamic_dispatch import (
     dyn_method,
     dyn_fun,
 )
+from .tests import run_tests
 
 # from .test import test

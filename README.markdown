@@ -16,20 +16,32 @@ do not work with any of the multiple dispatch packages I have tried.
 Note that strong typing is enforced, passing parameters of types different from the one
 listed in the decorator will result in throwing an exception.
 
+## Build
+
+`python -m build`
+
+Type generation
+
+`stubgen -p dyn_dispatch .`
+
+Run tests
+
+`python -m unittest discover`
+
 
 ### Example:
 
 
 ```python
-    from __future__ import annotations #required to accept and return class instances in methods
+    from typing import Self #required to accept and return class instances in methods
     # class definition   
     class AClass:
-        def __init__(self, i: int, j: int = 0):
+        def __init__(self, i: int):
             self.i = i
 
         @dyn_method #does not work with multimethods and multipledispatch
-        def __add__(self, *_) -> AClass:
-            ...
+        def __add__(self, *_) -> Self:
+            return self
 
         @dyn_method
         def set(self, *_) -> None:
@@ -39,7 +51,7 @@ listed in the decorator will result in throwing an exception.
     
     @dyn_dispatch(AClass, "__add__", AClass)
     def add_obj(self, other: AClass) -> AClass:
-        return AClass(self.i + other.i, self.j + other.j)
+        return AClass(self.i + other.i, self.i + other.i)
 
     @dyn_dispatch(AClass, "__add__", int)
     def add_int(self, i: int) -> AClass:
