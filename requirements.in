@@ -1,2 +1,5 @@
 mypy
 build
+mkdocs
+mkdocstrings[python]
+mkdocs-material

@@ -1,6 +1,6 @@
 """Implementation of multiple dispatch/multimethods.
 
-To allow for overloaded mehtods inside a class decorate an empty method with the `@dyn`_method decorator
+To allow for overloaded mehtods inside a class decorate an empty method with the `@dyn _method` decorator
 and use the `@dyn_dispatch` decorator to generate overloaded versions of the declared method outside
 the class definition.
 

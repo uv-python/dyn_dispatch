@@ -1,0 +1,11 @@
+site_name: "Dynamic dispatch"
+
+docs_dir: ./dyn_dispatch/docs
+
+site_dir: ./dyn_dispatch/doc_site
+
+theme:
+  name: "material"
+
+plugins:
+  - mkdocstrings
