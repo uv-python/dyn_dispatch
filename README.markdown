@@ -20,13 +20,19 @@ listed in the decorator will result in throwing an exception.
 
 `python -m build`
 
-Type generation
+### Type generation
 
 `stubgen -p dyn_dispatch .`
 
-Run tests
+### Run tests
 
 `python -m unittest discover`
+
+### Build documentation
+
+`mkdocs build`
+
+Documentation is found in `./dyn_dispatch/site_docs`.
 
 
 ### Example:
